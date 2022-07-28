@@ -1,0 +1,10 @@
+source: https://raw.githubusercontent.com/yaroslav-korotaev/hurp-templates/master/lib/implode.yml
+data:
+  name: hurp-cli
+  version: "0.1.0"
+  description: CLI toolkit interface, currently implemeted with yargs
+  keywords:
+    - hurp
+    - cli
+  author: Yaroslav Korotaev <yaroslav.korotaev@gmail.com>
+  repo: yaroslav-korotaev/hurp-cli

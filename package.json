@@ -1,0 +1,27 @@
+{
+  "name": "hurp-cli",
+  "version": "0.1.0",
+  "description": "CLI toolkit interface, currently implemeted with yargs",
+  "keywords": [
+    "hurp",
+    "cli"
+  ],
+  "bugs": "https://github.com/yaroslav-korotaev/hurp-cli/issues",
+  "license": "MIT",
+  "author": "Yaroslav Korotaev <yaroslav.korotaev@gmail.com>",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": "yaroslav-korotaev/hurp-cli",
+  "scripts": {},
+  "dependencies": {
+    "yargs": "^17.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.40",
+    "@types/yargs": "^17.0.10",
+    "typescript": "^4.7.3"
+  }
+}
