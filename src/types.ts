@@ -1,5 +1,8 @@
 export type Option = {
   type: 'string' | 'boolean';
+  default?: unknown;
+  description?: string;
+  required?: boolean;
 };
 
 export type Options = {

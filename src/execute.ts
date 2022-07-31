@@ -46,7 +46,9 @@ function registerOptions<S extends Options>(
       
       yargs.option(key, {
         type: option.type,
-        global: false,
+        default: option.default,
+        describe: option.description,
+        demandOption: option.required,
       });
     }
   }
