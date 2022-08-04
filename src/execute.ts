@@ -8,16 +8,16 @@ import type {
 } from './types';
 import { isCommand } from './helpers';
 
-export type ExecuteOptions<C, S extends Options> = {
-  options?: S;
-  middleware?: Handler<C, S>;
-  children: Node<C, any>[];
+export type ExecuteOptions<C, O extends Options> = {
+  options?: O;
+  middleware?: Handler<C, O>;
+  children: Node<C>[];
 };
 
-export async function execute<C, S extends Options>(
+export async function execute<C, O extends Options>(
   argv: string[],
   ctx: C,
-  options: ExecuteOptions<C, S>,
+  options: ExecuteOptions<C, O>,
 ): Promise<void> {
   registerOptions(yargs, options.options);
   registerMiddleware(yargs, ctx, options.middleware);
@@ -34,9 +34,9 @@ export async function execute<C, S extends Options>(
   await yargs.parse(argv);
 }
 
-function registerOptions<S extends Options>(
+function registerOptions<O extends Options>(
   yargs: yargs.Argv,
-  options: S | undefined,
+  options: O | undefined,
 ): void {
   if (options) {
     const keys = Object.keys(options);
@@ -54,10 +54,30 @@ function registerOptions<S extends Options>(
   }
 }
 
-function registerMiddleware<C, S extends Options>(
+function registerArgs<A extends Options>(
+  yargs: yargs.Argv,
+  args: A | undefined,
+): void {
+  if (args) {
+    const keys = Object.keys(args);
+    
+    for (const key of keys) {
+      const arg = args[key];
+      
+      yargs.positional(key, {
+        type: arg.type,
+        default: arg.default,
+        describe: arg.description,
+        demandOption: arg.required,
+      });
+    }
+  }
+}
+
+function registerMiddleware<C, O extends Options>(
   yargs: yargs.Argv,
   ctx: C,
-  middleware: Handler<C, S> | undefined,
+  middleware: Handler<C, O> | undefined,
 ): void {
   if (middleware) {
     yargs.middleware(async (args: any) => {
@@ -66,10 +86,10 @@ function registerMiddleware<C, S extends Options>(
   }
 }
 
-function registerChildren<C, S extends Options>(
+function registerChildren<C>(
   yargs: yargs.Argv,
   ctx: C,
-  children: Node<C, any>[],
+  children: Node<C>[],
 ): void {
   for (const child of children) {
     if (isCommand(child)) {
@@ -80,10 +100,10 @@ function registerChildren<C, S extends Options>(
   }
 }
 
-function registerCommand<C, S extends Options>(
+function registerCommand<C, O extends Options, A extends Options>(
   yargs: yargs.Argv,
   ctx: C,
-  command: Command<C, S>,
+  command: Command<C, O, A>,
 ): void {
   const names = (command.default) ? [command.name, '*'] : command.name;
   
@@ -92,6 +112,7 @@ function registerCommand<C, S extends Options>(
     describe: command.description,
     builder: yargs => {
       registerOptions(yargs, command.options);
+      registerArgs(yargs, command.args);
       
       return yargs;
     },
@@ -99,10 +120,10 @@ function registerCommand<C, S extends Options>(
   });
 }
 
-function registerGroup<C, S extends Options>(
+function registerGroup<C, O extends Options>(
   yargs: yargs.Argv,
   ctx: C,
-  group: Group<C, S>,
+  group: Group<C, O>,
 ): void {
   yargs.command({
     command: group.name,

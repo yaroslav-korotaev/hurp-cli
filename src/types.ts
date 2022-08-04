@@ -15,26 +15,27 @@ export type InferOptionType<O extends Option> =
   unknown
 ;
 
-export type Args<S extends Options> = {
-  [K in keyof S]: InferOptionType<S[K]>;
+export type Args<O extends Options> = {
+  [K in keyof O]: InferOptionType<O[K]>;
 };
 
-export type Handler<C, S extends Options> = (ctx: C, args: Args<S>) => Promise<void>;
+export type Handler<C, O extends Options> = (ctx: C, args: Args<O>) => Promise<void>;
 
-export type Node<C, S extends Options> = Group<C, S> | Command<C, S>;
+export type Node<C> = Group<C, any> | Command<C, any, any>;
 
-export type Command<C, S extends Options> = {
+export type Command<C, O extends Options, A extends Options> = {
   name: string;
   default?: boolean;
   description?: string;
-  options?: S;
-  handler: Handler<C, S>;
+  options?: O;
+  args?: A;
+  handler: Handler<C, O & A>;
 };
 
-export type Group<C, S extends Options> = {
+export type Group<C, O extends Options> = {
   name: string;
   description?: string;
-  options?: S;
-  middleware?: Handler<C, S>;
-  children: Node<C, any>[];
+  options?: O;
+  middleware?: Handler<C, O>;
+  children: Node<C>[];
 };
